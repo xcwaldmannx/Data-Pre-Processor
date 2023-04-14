@@ -1,2 +1,7 @@
 ﻿  Image.cpp
-  Data Pre-Processor.vcxproj -> C:\Users\xcwal\source\repos\Data Pre-Processor\x64\Debug\Data Pre-Processor.exe
+C:\Users\xcwal\source\repos\Data Pre-Processor\Data Pre-Processor\Image.cpp(48,55): warning C4267: 'argument': conversion from 'size_t' to 'uLong', possible loss of data
+C:\Users\xcwal\source\repos\Data Pre-Processor\Data Pre-Processor\Image.cpp(51,145): warning C4267: 'argument': conversion from 'size_t' to 'uLong', possible loss of data
+Image.obj : error LNK2019: unresolved external symbol compress referenced in function "public: bool __cdecl Image::process(void)" (?process@Image@@QEAA_NXZ)
+Image.obj : error LNK2019: unresolved external symbol compressBound referenced in function "public: bool __cdecl Image::process(void)" (?process@Image@@QEAA_NXZ)
+Libs\zlib\zlib.lib : warning LNK4272: library machine type 'x86' conflicts with target machine type 'x64'
+C:\Users\xcwal\source\repos\Data Pre-Processor\x64\Debug\Data Pre-Processor.exe : fatal error LNK1120: 2 unresolved externals

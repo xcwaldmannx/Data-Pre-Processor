@@ -3,8 +3,6 @@
 
 #define VERSION 1.0
 
-#include "zlib.h"
-
 #include "Image.h"
 
 int main() {

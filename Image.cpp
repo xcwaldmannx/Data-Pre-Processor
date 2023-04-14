@@ -2,9 +2,12 @@
 
 #include <fstream>
 #include <iostream>
+#include <direct.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
+#include "zlib.h"
 
 Image::Image() {
 }
@@ -26,41 +29,73 @@ void Image::free(Image& img) {
 }
 
 bool Image::process() {
+	m_filename = m_filename.substr(m_filename.find_last_of("/") + 1);
+	m_type = m_filename.substr(0, 3);
 	size_t fus = m_filename.find_first_of("_") + 1;
 	size_t lus = m_filename.find_last_of("_");
-	m_filename = m_filename.substr(fus, lus - fus);
+	m_alias = m_filename.substr(fus, lus - fus);
 
-	std::string outputFilename = m_filename + ".tex";
-	std::ofstream output("Assets/" + outputFilename);
+	std::string outDir = "Assets\\" + m_alias + "\\";
+
+	// create out directory
+	int result = _mkdir(outDir.c_str());
+
+	if (result == 0) {
+		std::cerr << "Failed to create directory: " << outDir << "\n";
+		return 0;
+	}
+
+	std::string outputFilename = m_alias + ".tex";
+	std::ofstream output(outDir + outputFilename);
 
 	std::cout << "Processing...\n";
-	output << "name="     << m_filename << "\n";
-	output << "width="    << m_width << "\n";
-	output << "height="    << m_height << "\n";
+	output << "filename=" << m_filename << "\n";
+	output << "alias="    << m_alias    << "\n";
+	output << "type="     << m_type     << "\n";
+	output << "width="    << m_width    << "\n";
+	output << "height="   << m_height   << "\n";
 	output << "channels=" << m_channels << "\n";
 
-	size_t dataLength = std::strlen(reinterpret_cast<const char*>(m_imageData));
-	size_t processChunk = 8000;
+	// compress data
+
+	size_t imageDataLength = std::strlen(reinterpret_cast<const char*>(m_imageData));
+
+	uLong compressed_size = compressBound(imageDataLength); // get the maximum size of the compressed data
+	char* compressed_data = new char[compressed_size];
+
+	result = compress(reinterpret_cast<Bytef*>(compressed_data), &compressed_size, reinterpret_cast<const Bytef*>(m_imageData), imageDataLength);
+	if (result == Z_OK) {
+		std::cout << "Compression successful!" << std::endl;
+		std::cout << "Original size: " << imageDataLength << " bytes" << std::endl;
+		std::cout << "Compressed size: " << compressed_size << " bytes" << std::endl;
+	}
+	else {
+		std::cerr << "Compression failed with error code " << result << std::endl;
+	}
+
+	// write compressed data
+
+	size_t processDataAmount = 4000;
 	size_t totalProcessed = 0;
 
-	while (totalProcessed < dataLength) {
+	while (totalProcessed < compressed_size) {
 
-		if (totalProcessed + processChunk > dataLength) {
-			processChunk = dataLength - totalProcessed;
-			std::string chunk = std::string(reinterpret_cast<const char*>(m_imageData)).substr(totalProcessed, processChunk);
+		if (totalProcessed + processDataAmount > compressed_size) {
+			processDataAmount = compressed_size - totalProcessed;
+			std::string chunk = std::string(reinterpret_cast<const char*>(m_imageData)).substr(totalProcessed, processDataAmount);
 			output << chunk << "\n";
 			break;
 		}
 
-		std::string chunk = std::string(reinterpret_cast<const char*>(m_imageData)).substr(totalProcessed, processChunk);
+		std::string chunk = std::string(reinterpret_cast<const char*>(m_imageData)).substr(totalProcessed, processDataAmount);
 		output << chunk << "\n";
-		totalProcessed += processChunk;
+		totalProcessed += processDataAmount;
 	}
 
 	output.close();
 
 	if (output.fail()) {
-		std::cerr << "Error writing " << m_filename << "\n";
+		std::cerr << "Error writing " << m_filename << ".\n";
 		return 0;
 	}
 
@@ -85,8 +120,10 @@ unsigned char* Image::getImageData() {
 }
 
 void Image::print() {
-	std::cout << "Name:     " << m_filename << "\n";
-	std::cout << "Width:    " << m_width << "\n";
-	std::cout << "Height:   " << m_height << "\n";
+	std::cout << "Filename: " << m_filename << "\n";
+	std::cout << "alias:    " << m_alias    << "\n";
+	std::cout << "type:     " << m_type     << "\n";
+	std::cout << "Width:    " << m_width    << "\n";
+	std::cout << "Height:   " << m_height   << "\n";
 	std::cout << "Channels: " << m_channels << "\n";
 }

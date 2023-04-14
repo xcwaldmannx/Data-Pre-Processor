@@ -21,6 +21,8 @@ public:
 
 private:
 	std::string m_filename = "";
+	std::string m_alias = "";
+	std::string m_type = "";
 	int m_width = 0;
 	int m_height = 0;
 	int m_channels = 0;
