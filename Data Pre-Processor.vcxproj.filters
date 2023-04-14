@@ -7,10 +7,24 @@
     <Filter Include="src\main">
       <UniqueIdentifier>{e56c095b-f8b4-4bdc-8572-8cab565e598c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\main\Image">
+      <UniqueIdentifier>{6d347c1c-fd5b-4902-ab4b-39f254f51a5e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>src\main</Filter>
     </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>src\main\Image</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Image.h">
+      <Filter>src\main\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>src\main\Image</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
