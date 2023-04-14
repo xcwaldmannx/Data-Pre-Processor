@@ -20,6 +20,10 @@ public:
 	void print();
 
 private:
+	bool processTEX();
+	bool processMTL();
+
+private:
 	std::string m_filename = "";
 	std::string m_alias = "";
 	std::string m_type = "";

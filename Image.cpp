@@ -18,10 +18,11 @@ Image::~Image() {
 bool Image::load(const std::string& filename, Image& img) {
 	img.m_filename = filename;
 	img.m_imageData = stbi_load(img.m_filename.c_str(), &img.m_width, &img.m_height, &img.m_channels, STBI_rgb_alpha);
-	if (img.m_imageData) {
-		return 1;
+	if (img.m_imageData == NULL) {
+		std::cerr << "File or directory could not be located.\n";
+		return false;
 	}
-	return 0;
+	return true;
 }
 
 void Image::free(Image& img) {
@@ -59,7 +60,6 @@ bool Image::process() {
 	// compress data
 
 	size_t imageDataLength = std::strlen(reinterpret_cast<const char*>(m_imageData));
-
 	uLong compressed_size = compressBound(imageDataLength); // get the maximum size of the compressed data
 	char* compressed_data = new char[compressed_size];
 
@@ -101,6 +101,14 @@ bool Image::process() {
 
 	std::cout << "Done.\n";
 	return 1;
+}
+
+bool Image::processTEX() {
+	return 0;
+}
+
+bool Image::processMTL() {
+	return 0;
 }
 
 int Image::getWidth() {
